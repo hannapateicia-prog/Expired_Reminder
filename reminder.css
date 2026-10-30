@@ -1,6 +1,6 @@
 /* ==========================================================
    Pengingat Kadaluwarsa — style.css
-   Daftar isi: 1 Token · 2 Reset · 3 Tata letak · 4 Komponen
+   Daftar isi: 1 Token · 2 Reset · 3 Tata letak · 4 Komponen · 5 Tampilan HP
    ========================================================== */
 
 /* ---------- 1. Token desain ---------- */
@@ -195,4 +195,65 @@ input, select {
 .toast__action {
   padding: 0; font: inherit; font-weight: 800; cursor: pointer;
   color: inherit; background: none; border: 0; text-decoration: underline;
+}
+
+/* ---------- 5. Tampilan HP (lebar ≤ 859px) ----------
+   Satu panel per tab, navigasi di bawah layar, target sentuh ≥ 44px. */
+.tabbar { display: none; }
+input, select { min-width: 0; }
+
+@media (max-width: 859px) {
+  body { padding: 16px 14px calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .layout { gap: 0; }
+  .app-header { margin-bottom: 14px; }
+  .brand__mark { width: 40px; height: 40px; border-radius: 11px; }
+  .app-header__title { font-size: 1.25rem; }
+  .app-header__sub { font-size: .85rem; }
+
+  /* Satu panel tampil sesuai tab aktif */
+  .card--form, .card--notif, .card--list { display: none; }
+  .app[data-tab="daftar"] .card--list,
+  .app[data-tab="tambah"] .card--form,
+  .app[data-tab="notif"] .card--notif { display: block; }
+  .app:not([data-tab="daftar"]) .banner,
+  .app:not([data-tab="daftar"]) .stats { display: none; }
+
+  /* Kompak dan nyaman disentuh (font 16px mencegah zoom otomatis di iOS) */
+  .card { padding: 16px; }
+  .stat { padding: 12px 14px; }
+  .stat__value { font-size: 1.45rem; }
+  input, select, .btn { font-size: 1rem; min-height: 48px; }
+  .chip { padding: 8px 14px; font-size: .88rem; }
+  .field-row { grid-template-columns: 1fr 96px; }
+  .form-actions .btn { flex: 1; }
+  .btn--outline { min-height: 44px; }
+
+  /* Item: tombol aksi sejajar di bawah informasi */
+  .item { flex-wrap: wrap; gap: 10px; }
+  .item__actions { flex-direction: row; width: 100%; }
+  .link-btn { flex: 1; min-height: 44px; font-size: .9rem; }
+
+  /* Navigasi bawah */
+  .tabbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    background: var(--surface); border-top: 1px solid var(--line);
+  }
+  .tabbar__btn {
+    position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-height: 52px; padding: 6px 0; font: inherit; font-size: .75rem; font-weight: 700;
+    color: var(--muted); background: none; border: 0; border-radius: 10px; cursor: pointer;
+  }
+  .tabbar__icon { display: grid; place-items: center; width: 56px; height: 30px; border-radius: 999px; }
+  .tabbar__btn[aria-current="page"] { color: var(--brand); }
+  .tabbar__btn[aria-current="page"] .tabbar__icon { background: var(--brand-soft); }
+  .tabbar__badge {
+    position: absolute; top: 2px; left: calc(50% + 8px); min-width: 18px; padding: 0 5px;
+    border-radius: 999px; background: var(--bad); color: var(--bg);
+    font-size: .68rem; line-height: 18px; text-align: center;
+  }
+
+  /* Toast di atas navigasi bawah */
+  .toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); width: calc(100vw - 28px); }
 }

@@ -1,6 +1,6 @@
 /* ==========================================================
    Pengingat Kadaluwarsa — style.css
-   Daftar isi: 1 Token · 2 Reset · 3 Tata letak · 4 Komponen · 5 Tampilan HP
+   Daftar isi: 1 Token · 2 Reset · 3 Tata letak · 4 Komponen · 5 Navigasi dan tab · 6 Tampilan HP
    ========================================================== */
 
 /* ---------- 1. Token desain ---------- */
@@ -71,11 +71,7 @@ h1, h2, p { margin: 0; }
 
 /* ---------- 3. Tata letak ---------- */
 .app { max-width: 1040px; margin: 0 auto; }
-.layout { display: grid; gap: 20px; align-items: start; }
-.layout__side { display: grid; gap: 20px; }
-@media (min-width: 860px) {
-  .layout { grid-template-columns: 360px minmax(0, 1fr); }
-}
+.layout, .layout__side { display: block; }
 
 /* ---------- 4. Komponen ---------- */
 
@@ -197,36 +193,89 @@ input, select {
   color: inherit; background: none; border: 0; text-decoration: underline;
 }
 
-/* ---------- 5. Tampilan HP (lebar ≤ 859px) ----------
-   Satu panel per tab, navigasi di bawah layar, target sentuh ≥ 44px. */
-.tabbar { display: none; }
+/* ---------- 5. Navigasi dan panel per tab ----------
+   Satu panel tampil sesuai tab aktif (data-tab pada .app). */
 input, select { min-width: 0; }
+.card--form, .card--notif, .card--list { display: none; }
+.app[data-tab="daftar"] .card--list,
+.app[data-tab="tambah"] .card--form,
+.app[data-tab="notif"] .card--notif { display: block; }
+.app:not([data-tab="daftar"]) .banner,
+.app:not([data-tab="daftar"]) .stats { display: none; }
+/* Semua tab selebar sama (mengikuti .app) supaya pindah tab tidak "melompat" */
+.card--form, .card--notif, .card--list { width: 100%; }
 
+.card__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.card__head .card__title { margin: 0; }
+.btn--sm { flex: none; padding: 8px 14px; font-size: .88rem; }
+
+/* Laptop: tab di bawah header, lebarnya mengikuti konten */
+.tabbar {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  width: 100%; max-width: 1040px; margin: 0 auto 20px; padding: 6px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+.tabbar__btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 16px; font: inherit; font-size: .95rem; font-weight: 700; cursor: pointer;
+  color: var(--muted); background: none; border: 0; border-radius: 9px;
+  transition: background .15s, color .15s;
+}
+.tabbar__btn:hover { background: var(--surface-2); }
+.tabbar__btn[aria-current="page"] { background: var(--brand); color: var(--brand-ink); }
+.tabbar__icon { display: grid; place-items: center; }
+.tabbar__badge {
+  min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--bad); color: var(--bg);
+  font-size: .72rem; line-height: 20px; text-align: center;
+}
+.tabbar__btn[aria-current="page"] .tabbar__badge { background: var(--brand-ink); color: var(--brand); }
+
+/* Desktop: ketiga kartu selebar navigasi, isi formulir dibagi dua kolom */
+@media (min-width: 860px) {
+  .card { padding: 24px; min-height: 340px; }
+
+  /* Tab Tambah: Nama | Disimpan di, lalu Tanggal | Jumlah */
+  .card--form form { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; align-content: start; }
+  .card--form .field-row { display: contents; }
+  .card--form .field:has(#nama)   { order: 1; }
+  .card--form .field:has(#lokasi) { order: 2; }
+  .card--form .field:has(#tgl)    { order: 3; }
+  .card--form .field:has(#qty)    { order: 4; }
+  .card--form .chips       { order: 5; grid-column: 1 / -1; }
+  .card--form .form-error  { order: 6; grid-column: 1 / -1; }
+  .card--form .form-actions { order: 7; grid-column: 1 / -1; justify-content: flex-end; }
+  .card--form .btn--primary { flex: none; min-width: 200px; }
+
+  /* Tab Notifikasi: pengaturan kiri, tombol kanan, keterangan di bawah */
+  .card--notif { display: none; }
+  .app[data-tab="notif"] .card--notif {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; align-content: start; align-items: end;
+  }
+  .card--notif .card__title,
+  .card--notif .notif-status,
+  .card--notif .hint { grid-column: 1 / -1; }
+  .card--notif .form-actions { margin-bottom: 14px; justify-content: flex-end; }
+}
+
+/* ---------- 6. Tampilan HP (lebar ≤ 859px) ----------
+   Navigasi pindah ke bawah layar, target sentuh ≥ 44px. */
 @media (max-width: 859px) {
-  body { padding: 16px 14px calc(96px + env(safe-area-inset-bottom, 0px)); }
-  .layout { gap: 0; }
+  body { padding: 16px 14px calc(104px + env(safe-area-inset-bottom, 0px)); }
   .app-header { margin-bottom: 14px; }
   .brand__mark { width: 40px; height: 40px; border-radius: 11px; }
   .app-header__title { font-size: 1.25rem; }
   .app-header__sub { font-size: .85rem; }
-
-  /* Satu panel tampil sesuai tab aktif */
-  .card--form, .card--notif, .card--list { display: none; }
-  .app[data-tab="daftar"] .card--list,
-  .app[data-tab="tambah"] .card--form,
-  .app[data-tab="notif"] .card--notif { display: block; }
-  .app:not([data-tab="daftar"]) .banner,
-  .app:not([data-tab="daftar"]) .stats { display: none; }
 
   /* Kompak dan nyaman disentuh (font 16px mencegah zoom otomatis di iOS) */
   .card { padding: 16px; }
   .stat { padding: 12px 14px; }
   .stat__value { font-size: 1.45rem; }
   input, select, .btn { font-size: 1rem; min-height: 48px; }
+  .btn--sm, .btn--outline { min-height: 44px; }
   .chip { padding: 8px 14px; font-size: .88rem; }
   .field-row { grid-template-columns: 1fr 96px; }
   .form-actions .btn { flex: 1; }
-  .btn--outline { min-height: 44px; }
 
   /* Item: tombol aksi sejajar di bawah informasi */
   .item { flex-wrap: wrap; gap: 10px; }
@@ -236,24 +285,26 @@ input, select { min-width: 0; }
   /* Navigasi bawah */
   .tabbar {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
-    background: var(--surface); border-top: 1px solid var(--line);
+    width: auto; max-width: none; margin: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+    padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0px));
+    background: var(--surface);
+    border: 0; border-top: 1px solid var(--line); border-radius: 18px 18px 0 0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, .06);
   }
   .tabbar__btn {
-    position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    min-height: 52px; padding: 6px 0; font: inherit; font-size: .75rem; font-weight: 700;
-    color: var(--muted); background: none; border: 0; border-radius: 10px; cursor: pointer;
+    position: relative; flex-direction: column; justify-content: center; gap: 2px;
+    min-height: 56px; padding: 6px 0; font-size: .75rem; border-radius: 12px;
   }
-  .tabbar__icon { display: grid; place-items: center; width: 56px; height: 30px; border-radius: 999px; }
-  .tabbar__btn[aria-current="page"] { color: var(--brand); }
+  .tabbar__btn:hover { background: none; }
+  .tabbar__btn[aria-current="page"] { background: none; color: var(--brand); }
+  .tabbar__icon { width: 64px; height: 32px; border-radius: 999px; transition: background .15s; }
   .tabbar__btn[aria-current="page"] .tabbar__icon { background: var(--brand-soft); }
-  .tabbar__badge {
-    position: absolute; top: 2px; left: calc(50% + 8px); min-width: 18px; padding: 0 5px;
-    border-radius: 999px; background: var(--bad); color: var(--bg);
-    font-size: .68rem; line-height: 18px; text-align: center;
+  .tabbar__badge, .tabbar__btn[aria-current="page"] .tabbar__badge {
+    position: absolute; top: 2px; left: calc(50% + 10px); min-width: 18px; padding: 0 5px;
+    background: var(--bad); color: var(--bg); font-size: .68rem; line-height: 18px;
   }
 
   /* Toast di atas navigasi bawah */
-  .toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); width: calc(100vw - 28px); }
+  .toast { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); width: calc(100vw - 28px); }
 }

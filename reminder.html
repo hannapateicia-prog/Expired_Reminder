@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#17653c" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e1511" media="(prefers-color-scheme: dark)">
   <meta name="description" content="Catat makanan di rumah dan dapatkan pengingat sebelum kadaluwarsa.">
   <title>Pengingat Kadaluwarsa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +13,7 @@
   <link rel="stylesheet" href="reminder.css">
 </head>
 <body>
-  <div class="app">
+  <div class="app" data-tab="daftar">
 
     <!-- Header -->
     <header class="app-header">
@@ -47,7 +49,7 @@
 
       <!-- Kolom kiri: formulir dan pengaturan -->
       <aside class="layout__side">
-        <section class="card" aria-labelledby="form-title">
+        <section class="card card--form" aria-labelledby="form-title">
           <h2 class="card__title" id="form-title">Tambah makanan</h2>
           <form id="food-form" novalidate>
             <div class="field">
@@ -84,7 +86,7 @@
           </form>
         </section>
 
-        <section class="card" aria-labelledby="notif-title">
+        <section class="card card--notif" aria-labelledby="notif-title">
           <h2 class="card__title" id="notif-title">Notifikasi</h2>
           <p class="notif-status">Status: <span class="pill pill--warn" id="notif-status">Belum diaktifkan</span></p>
           <div class="field">
@@ -102,7 +104,7 @@
       </aside>
 
       <!-- Kolom kanan: daftar -->
-      <section class="card layout__main" aria-labelledby="list-title">
+      <section class="card card--list layout__main" aria-labelledby="list-title">
         <h2 class="card__title" id="list-title">Daftar makanan</h2>
         <div class="toolbar">
           <div class="field">
@@ -127,6 +129,23 @@
 
     </div>
   </div>
+
+  <!-- Navigasi bawah (khusus HP) -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <button class="tabbar__btn" type="button" data-tab="daftar" aria-current="page">
+      <span class="tabbar__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+      <span>Daftar</span>
+      <span class="tabbar__badge" id="tab-badge" hidden>0</span>
+    </button>
+    <button class="tabbar__btn" type="button" data-tab="tambah">
+      <span class="tabbar__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
+      <span>Tambah</span>
+    </button>
+    <button class="tabbar__btn" type="button" data-tab="notif">
+      <span class="tabbar__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>
+      <span>Notifikasi</span>
+    </button>
+  </nav>
 
   <!-- Toast -->
   <div class="toast" id="toast" role="status" aria-live="polite" hidden>

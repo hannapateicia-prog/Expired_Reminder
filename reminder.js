@@ -231,9 +231,8 @@
 
   /* ---------- 7. Aksi ---------- */
   const form = $('#food-form');
-  const isMobile = () => window.matchMedia('(max-width: 859px)').matches;
 
-  /** Berpindah panel pada tampilan HP: daftar, tambah, atau notif. */
+  /** Berpindah tab: daftar, tambah, atau notif (laptop dan HP). */
   function setTab(name) {
     $('.app').dataset.tab = name;
     $$('.tabbar__btn').forEach((b) => {
@@ -264,8 +263,7 @@
     $('#form-title').textContent = 'Ubah makanan';
     $('#submit-btn').textContent = 'Simpan perubahan';
     $('#cancel-btn').hidden = false;
-    if (isMobile()) setTab('tambah');
-    else form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTab('tambah');
     $('#nama').focus();
   }
 
@@ -293,8 +291,7 @@
     resetForm();
     render();
     checkReminders();
-    if (isMobile()) setTab('daftar');
-    else $('#nama').focus();
+    setTab('daftar');
   }
 
   function removeItem(id) {
@@ -318,7 +315,8 @@
   /* ---------- 8. Event ---------- */
   function bindEvents() {
     form.addEventListener('submit', submitForm);
-    $('#cancel-btn').addEventListener('click', () => { resetForm(); if (isMobile()) setTab('daftar'); });
+    $('#add-btn').addEventListener('click', () => { resetForm(); setTab('tambah'); $('#nama').focus(); });
+    $('#cancel-btn').addEventListener('click', () => { resetForm(); setTab('daftar'); });
     $$('.tabbar__btn').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab)));
 
     $$('.chip').forEach((chip) => chip.addEventListener('click', () => {

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Catat makanan di rumah dan dapatkan pengingat sebelum kadaluwarsa.">
+  <title>Pengingat Kadaluwarsa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+  <link rel="stylesheet" href="reminder.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="app-header">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14z"/><path d="M5 19c3-5 6-8 10-10"/></svg>
+      </span>
+      <div>
+        <h1 class="app-header__title">Pengingat Kadaluwarsa</h1>
+        <p class="app-header__sub">Kurangi makanan terbuang, hemat uang belanja.</p>
+      </div>
+    </header>
+
+    <!-- Banner ringkasan -->
+    <div class="banner" id="banner" role="status"></div>
+
+    <!-- Statistik (juga berfungsi sebagai penyaring) -->
+    <section class="stats" aria-label="Ringkasan status makanan">
+      <button class="stat" type="button" data-filter="semua" aria-pressed="true">
+        <span class="stat__label">Semua</span><strong class="stat__value" id="count-semua">0</strong>
+      </button>
+      <button class="stat stat--ok" type="button" data-filter="aman" aria-pressed="false">
+        <span class="stat__label">Aman</span><strong class="stat__value" id="count-aman">0</strong>
+      </button>
+      <button class="stat stat--warn" type="button" data-filter="segera" aria-pressed="false">
+        <span class="stat__label">Segera</span><strong class="stat__value" id="count-segera">0</strong>
+      </button>
+      <button class="stat stat--bad" type="button" data-filter="lewat" aria-pressed="false">
+        <span class="stat__label">Kadaluwarsa</span><strong class="stat__value" id="count-lewat">0</strong>
+      </button>
+    </section>
+
+    <div class="layout">
+
+      <!-- Kolom kiri: formulir dan pengaturan -->
+      <aside class="layout__side">
+        <section class="card" aria-labelledby="form-title">
+          <h2 class="card__title" id="form-title">Tambah makanan</h2>
+          <form id="food-form" novalidate>
+            <div class="field">
+              <label for="nama">Nama makanan</label>
+              <input id="nama" name="nama" maxlength="50" placeholder="Contoh: Susu UHT" autocomplete="off">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="tgl">Tanggal kadaluwarsa</label>
+                <input id="tgl" name="tgl" type="date">
+              </div>
+              <div class="field">
+                <label for="qty">Jumlah</label>
+                <input id="qty" name="qty" type="number" min="1" max="999" value="1" inputmode="numeric">
+              </div>
+            </div>
+            <div class="chips" aria-label="Isi tanggal cepat">
+              <button class="chip" type="button" data-days="3">+3 hari</button>
+              <button class="chip" type="button" data-days="7">+1 minggu</button>
+              <button class="chip" type="button" data-days="30">+1 bulan</button>
+              <button class="chip" type="button" data-days="180">+6 bulan</button>
+            </div>
+            <div class="field">
+              <label for="lokasi">Disimpan di</label>
+              <select id="lokasi" name="lokasi">
+                <option>Kulkas</option><option>Freezer</option><option>Lemari dapur</option><option>Lainnya</option>
+              </select>
+            </div>
+            <p class="form-error" id="form-error" role="alert"></p>
+            <div class="form-actions">
+              <button class="btn btn--primary" id="submit-btn" type="submit">Simpan makanan</button>
+              <button class="btn btn--ghost" id="cancel-btn" type="button" hidden>Batal</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card" aria-labelledby="notif-title">
+          <h2 class="card__title" id="notif-title">Notifikasi</h2>
+          <p class="notif-status">Status: <span class="pill pill--warn" id="notif-status">Belum diaktifkan</span></p>
+          <div class="field">
+            <label for="days">Ingatkan jika kadaluwarsa dalam</label>
+            <select id="days">
+              <option value="1">1 hari</option><option value="3">3 hari</option><option value="7">7 hari</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn--outline" id="enable-btn" type="button">Aktifkan</button>
+            <button class="btn btn--outline" id="test-btn" type="button">Coba notifikasi</button>
+          </div>
+          <p class="hint">Dicek otomatis tiap 30 menit dan saat halaman dibuka, maksimal sekali per makanan per hari. Notifikasi hanya muncul selama halaman ini terbuka (boleh di tab lain). Jika notifikasi sistem diblokir, pengingat tetap tampil di dalam halaman.</p>
+        </section>
+      </aside>
+
+      <!-- Kolom kanan: daftar -->
+      <section class="card layout__main" aria-labelledby="list-title">
+        <h2 class="card__title" id="list-title">Daftar makanan</h2>
+        <div class="toolbar">
+          <div class="field">
+            <label for="search">Cari</label>
+            <input id="search" type="search" placeholder="Nama atau lokasi">
+          </div>
+          <div class="field">
+            <label for="sort">Urutkan</label>
+            <select id="sort">
+              <option value="tanggal">Paling cepat kadaluwarsa</option>
+              <option value="nama">Nama A–Z</option>
+              <option value="terbaru">Terakhir ditambahkan</option>
+            </select>
+          </div>
+        </div>
+        <ul class="items" id="items"></ul>
+        <div class="list-footer">
+          <p class="hint" id="status-note"></p>
+          <button class="btn btn--outline" id="clear-expired-btn" type="button" hidden>Hapus semua yang kadaluwarsa</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <span id="toast-text"></span>
+    <button class="toast__action" id="toast-action" type="button" hidden>Urungkan</button>
+  </div>
+
+  <script src="reminder.js"></script>
+</body>
+</html>

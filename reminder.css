@@ -1,9 +1,3 @@
-/* ==========================================================
-   Pengingat Kadaluwarsa — style.css
-   Daftar isi: 1 Token · 2 Reset · 3 Tata letak · 4 Komponen · 5 Navigasi dan tab · 6 Tampilan HP
-   ========================================================== */
-
-/* ---------- 1. Token desain ---------- */
 :root {
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);

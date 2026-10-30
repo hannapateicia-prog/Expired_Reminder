@@ -1,8 +1,3 @@
-/**
- * Pengingat Kadaluwarsa — script.js
- * Struktur: 1 Konfigurasi · 2 Utilitas · 3 State · 4 Status ·
- *           5 Notifikasi · 6 Tampilan · 7 Aksi · 8 Event · 9 Inisialisasi
- */
 (() => {
   'use strict';
 

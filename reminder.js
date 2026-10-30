@@ -224,10 +224,24 @@
     $('#clear-expired-btn').hidden = !counts.lewat;
     const urgent = counts.lewat + counts.segera;
     document.title = `${urgent ? `(${urgent}) ` : ''}Pengingat Kadaluwarsa`;
+    const badge = $('#tab-badge');
+    badge.textContent = urgent;
+    badge.hidden = !urgent;
   }
 
   /* ---------- 7. Aksi ---------- */
   const form = $('#food-form');
+  const isMobile = () => window.matchMedia('(max-width: 859px)').matches;
+
+  /** Berpindah panel pada tampilan HP: daftar, tambah, atau notif. */
+  function setTab(name) {
+    $('.app').dataset.tab = name;
+    $$('.tabbar__btn').forEach((b) => {
+      if (b.dataset.tab === name) b.setAttribute('aria-current', 'page');
+      else b.removeAttribute('aria-current');
+    });
+    window.scrollTo({ top: 0 });
+  }
 
   function resetForm() {
     state.editingId = null;
@@ -250,7 +264,8 @@
     $('#form-title').textContent = 'Ubah makanan';
     $('#submit-btn').textContent = 'Simpan perubahan';
     $('#cancel-btn').hidden = false;
-    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (isMobile()) setTab('tambah');
+    else form.scrollIntoView({ behavior: 'smooth', block: 'center' });
     $('#nama').focus();
   }
 
@@ -272,12 +287,14 @@
       showToast(`${data.nama} diperbarui.`);
     } else {
       state.items.push({ id: Date.now(), ...data });
+      showToast(`${data.nama} ditambahkan.`);
     }
     saveItems();
     resetForm();
     render();
     checkReminders();
-    $('#nama').focus();
+    if (isMobile()) setTab('daftar');
+    else $('#nama').focus();
   }
 
   function removeItem(id) {
@@ -301,7 +318,8 @@
   /* ---------- 8. Event ---------- */
   function bindEvents() {
     form.addEventListener('submit', submitForm);
-    $('#cancel-btn').addEventListener('click', resetForm);
+    $('#cancel-btn').addEventListener('click', () => { resetForm(); if (isMobile()) setTab('daftar'); });
+    $$('.tabbar__btn').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab)));
 
     $$('.chip').forEach((chip) => chip.addEventListener('click', () => {
       const date = new Date();
